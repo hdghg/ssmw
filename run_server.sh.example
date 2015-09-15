@@ -1,0 +1,8 @@
+#!/bin/sh
+export DB_CREATE=$OPENSHIFT_REPO_DIR/database/create/
+export DB_MIGRATE=$OPENSHIFT_REPO_DIR/database/migrate/
+export DB_REQUIRED_SCHEME="$(cat $OPENSHIFT_REPO_DIR/database/version.properties)"
+export DB_DBNAME=wildfly
+export DB_EXEC=psql
+
+python $OPENSHIFT_REPO_DIR/database/ssmw/ssmw.py
