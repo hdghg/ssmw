@@ -5,31 +5,51 @@
 Authors: https://github.com/hdghg
          https://github.com/olologin
 
-This script is a migration tool for PostgreSQL databases, it was
-written in pure Python, and should be compatible with 2 and 3 branches of Python
-
-The only required dependency to run it - psql utility from standart PostgreSQL
-client distribution. This script gets all necessary params from environment
-variables, thus you should specify this parameters:
-    DB_EXEC: default - psql
-    DB_DBNAME: name of database which you want to upgrade
-    DB_CREATE: path to directory which contains all creation scripts
-    each creation script should have name %d.sql where %d - version
-    of db, for example 1.sql, 5.sql, etc
-    DB_MIGRATE: path to directory which contains all migration scripts
-    each migration script should have name %dto%d.sql where each %d - version
-    of db, for example 1to3.sql, 5to10.sql
-    DB_REQUIRED_SCHEME: Required scheme version
-unnecessary params:
-    DB_PARAMS: Additional custom parameters, like -U
-    DB_PASS: Password to database
+This small script is a migration tool for PostgreSQL databases, it was
+written in pure Python, and should be compatible with 2 and 3 branches of Python.
+Moreover, it was written in such a way that one can easily integrate it into his
+environment and automate migrations of DB. 
 
 This script will try to build all possible paths from existing (or non existing) scheme
 and merge creation (if needed) with all needed migrations into one temporary file, which
 then it will execute in a single transaction, so your database will be completely upgraded
 to required scheme version, or will remain on current version if correct upgrade is impossible
 
-This script terminates with following return codes:
+The only required dependency to run it - psql utility from standart PostgreSQL
+client distribution.
+
+ssmw gets all necessary params from environment
+variables, thus you should specify these parameters:
+    DB_EXEC: default - psql
+
+    DB_DBNAME: name of database which you want to upgrade
+
+    DB_MIGRATE: path to directory which contains all migration scripts
+    each migration script should have name %dto%d.sql where each %d - version
+    of db, for example 1to3.sql, 5to10.sql. It doesn't requires any specific
+    directory structure, the only thing you have to 
+    For example you can set DB_MIGRATE variable to this directory with such structure:
+    ~/your_project/database/migrate
+    ├── 1to2.sql
+    ├── 2015-10
+    │   ├── 2to3.sql
+    │   ├── 4to5.sql
+    │   └── 5to6.sql
+    └── 2015-11
+        └── 3to4.sql
+    
+    DB_CREATE: path to directory which contains all creation scripts
+    each creation script should have name %d.sql where %d - version
+    of db, for example 1.sql, 5.sql, etc. Again, just as in case with
+    DB_MIGRATE variable here you can set DB_CREATE variable to any directory
+    with any structure.
+
+    DB_REQUIRED_SCHEME: Required scheme version
+unnecessary params:
+    DB_PARAMS: Additional custom parameters, like -U
+    DB_PASS: Password to database
+
+ssmw terminates with the following return codes:
     OK = 0
     PARAM_ERR = 78
     DB_AUTH_ERR = 77
